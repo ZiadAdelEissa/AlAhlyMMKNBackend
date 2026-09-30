@@ -1,0 +1,269 @@
+openapi: 3.0.3
+info:
+  title: MMKN Demo API
+  version: 0.0.4
+  description: English service dictionary, inquiry and demo payment. No authentication. All state resets on restart. Service IDs are integers; quote and payment IDs are UUID strings.
+servers:
+  - url: http://localhost:8080
+security: []
+paths:
+  /icons/{category}.svg:
+    get:
+      operationId: getServiceIcon
+      summary: Public vector icon used by Service.iconUrl
+      parameters:
+        - in: path
+          name: category
+          required: true
+          schema:
+            type: string
+            enum: [electricity, water, gas]
+      responses:
+        '200':
+          description: SVG image bytes, not a JSON or Base64 response
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+  /api/v1/services:
+    get:
+      operationId: getServiceDictionary
+      summary: Get services grouped by category
+      responses:
+        '200':
+          description: Full dictionary including unavailable services
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDictionary'
+  /api/v1/inquiries:
+    post:
+      operationId: inquireBill
+      summary: Check a demo subscriber and calculate a five-minute quote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [serviceId, subscriberNumber]
+              properties:
+                serviceId:
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  example: 1
+                subscriberNumber:
+                  type: string
+                  pattern: '^[0-9]{10}$'
+                  example: '1024750891'
+      responses:
+        '200':
+          description: In-memory demo quote. Integer piastres, expires in 300 seconds.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillQuote'
+        '400':
+          description: Invalid input or malformed JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '404':
+          description: Service or subscriber not found, or no outstanding bill
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Service unavailable or bill already paid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v1/payments:
+    post:
+      operationId: payDemoBill
+      summary: Pay the saved quote or replay an existing receipt without charging twice
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Za-z0-9_-]{8,128}$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [quoteId]
+              properties:
+                quoteId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: New payment or original receipt on replay
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReceipt'
+        '400':
+          description: Invalid input or idempotency key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '404':
+          description: Quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Expired quote, unavailable service, or key conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '503':
+          description: Demo store capacity reached
+    get:
+      operationId: getDemoPaymentHistory
+      summary: Shared demo history, newest first, reset on server restart
+      responses:
+        '200':
+          description: All demo receipts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PaymentReceipt'
+components:
+  schemas:
+    PaymentReceipt:
+      type: object
+      required: [paymentId, quoteId, reference, status, serviceId, serviceName, subscriberNumber, totalPiastres, currency, paidAt]
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+        quoteId:
+          type: string
+          format: uuid
+        reference:
+          type: string
+        status:
+          type: string
+          enum: [SUCCESS]
+        serviceId:
+          type: integer
+          format: int32
+        serviceName:
+          type: string
+        subscriberNumber:
+          type: string
+        totalPiastres:
+          type: integer
+          format: int64
+        currency:
+          type: string
+          enum: [EGP]
+        paidAt:
+          type: string
+          format: date-time
+    ApiError:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    BillQuote:
+      type: object
+      required: [quoteId, serviceId, serviceName, subscriberNumber, customerName, billMonth, currency, amountDuePiastres, serviceFeePiastres, vatPiastres, totalPiastres, createdAt, expiresAt]
+      properties:
+        quoteId:
+          type: string
+          format: uuid
+        serviceId:
+          type: integer
+          format: int32
+        serviceName:
+          type: string
+        subscriberNumber:
+          type: string
+        customerName:
+          type: string
+        billMonth:
+          type: string
+          example: '2026-08'
+        currency:
+          type: string
+          enum: [EGP]
+        amountDuePiastres:
+          type: integer
+          format: int64
+        serviceFeePiastres:
+          type: integer
+          format: int64
+        vatPiastres:
+          type: integer
+          format: int64
+        totalPiastres:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+    ServiceDictionary:
+      type: object
+      additionalProperties: false
+      required: [electricity, water, gas]
+      properties:
+        electricity:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+        water:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+        gas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+    Service:
+      type: object
+      additionalProperties: false
+      required: [id, name, available, iconUrl]
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+        name:
+          type: string
+          example: Cairo Electricity
+        available:
+          type: boolean
+          example: true
+        iconUrl:
+          type: string
+          description: Root-relative image URL. Resolve against the backend origin, not the frontend origin.
+          example: /icons/electricity.svg

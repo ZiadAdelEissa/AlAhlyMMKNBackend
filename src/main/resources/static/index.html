@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MMKN — Services</title>
+  <link rel="stylesheet" href="/preview.css">
+  <script src="/preview.js" defer></script>
+</head>
+<body>
+<main class="phone">
+  <div class="preview-label">MMKN <span>DEMO PREVIEW</span></div>
+  <section id="catalog-screen">
+    <header class="welcome"><div><p>Good evening</p><h1>Mina Adel</h1></div><span class="avatar">MA</span></header>
+    <label class="sr-only" for="search">Search services</label>
+    <input id="search" type="search" placeholder="Search services" autocomplete="off">
+    <p id="catalog-status" role="status"></p>
+    <div id="services"></div>
+    <button id="retry" class="secondary" hidden>Retry</button>
+  </section>
+  <section id="inquiry-screen" hidden>
+    <header class="heading"><button id="back" class="back" aria-label="Back to services">&#8249;</button><h1>Fees inquiry</h1></header>
+    <div class="service selected"><span id="selected-icon" class="icon" aria-hidden="true"></span><strong id="selected-name"></strong></div>
+    <form id="inquiry-form" novalidate>
+      <label for="subscriber">Subscriber number</label>
+      <input id="subscriber" name="subscriberNumber" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="1024 7508 91" aria-describedby="subscriber-help inquiry-error">
+      <p id="subscriber-help" class="help">ⓘ &nbsp;10 digits, printed at the top of your bill</p>
+      <p id="inquiry-error" class="error" role="alert"></p>
+      <div class="submit-area"><button id="check-bill" class="primary" type="submit">Check my bill</button><p class="demo-note">Demo only · No payment will be taken</p></div>
+    </form>
+    <details class="demo-details"><summary>Demo subscriber numbers</summary><p>Bill found: <b>1024750891</b><br>No outstanding bill: <b>1024750892</b><br>Other 10-digit numbers: subscriber not found.</p></details>
+  </section>
+  <section id="bill-screen" hidden>
+    <header class="heading"><button id="bill-back" class="back" aria-label="Back to fees inquiry">&#8249;</button><h1>Bill details</h1></header>
+    <div id="quote-banner" class="quote-banner"><span id="quote-label">Quote expires in</span><strong id="quote-countdown" role="timer" aria-label="Quote time remaining">05:00</strong></div>
+    <div class="bill-card">
+      <div class="bill-service"><span id="bill-icon" class="icon" aria-hidden="true"></span><div><strong id="bill-service-name"></strong><p id="bill-subscriber"></p></div></div>
+      <div class="bill-body">
+        <dl class="bill-rows"><div><dt>Customer</dt><dd id="bill-customer"></dd></div><div><dt>Bill month</dt><dd id="bill-month"></dd></div></dl>
+        <hr>
+        <dl class="bill-rows amounts"><div><dt>Amount due</dt><dd id="bill-amount"></dd></div><div><dt>Service fee</dt><dd id="bill-fee"></dd></div><div><dt>VAT (14% of fee)</dt><dd id="bill-vat"></dd></div></dl>
+        <hr>
+        <div class="bill-total"><strong>Total</strong><div><strong id="bill-total"></strong> <span id="bill-currency">EGP</span></div></div>
+      </div>
+    </div>
+    <p class="calculation-note">All amounts are calculated by the server in <strong>piastres</strong> and displayed here in EGP.</p>
+    <p id="quote-expired" class="error" role="status" hidden>This quote has expired. Check your bill again for an updated quote.</p>
+    <button id="quote-retry" class="primary" hidden>Check bill again</button>
+    <p id="payment-error" class="error" role="alert"></p>
+    <button id="pay-button" class="primary">Pay now · Demo</button>
+    <p class="demo-note">Demo only · No real money will be charged</p>
+  </section>
+  <section id="receipt-screen" hidden>
+    <div class="receipt-hero"><div class="receipt-check" aria-hidden="true">✓</div><h1>Payment successful</h1><p><strong id="receipt-total"></strong> <span id="receipt-currency">EGP</span></p></div>
+    <div class="bill-card receipt-card"><dl class="bill-rows">
+      <div><dt>Service</dt><dd id="receipt-service"></dd></div>
+      <div><dt>Subscriber</dt><dd id="receipt-subscriber"></dd></div>
+      <div><dt>Paid at</dt><dd id="receipt-date"></dd></div>
+      <div class="reference-row"><dt>Reference</dt><dd><span id="receipt-reference"></span><button id="copy-reference" class="secondary" aria-label="Copy payment reference">Copy</button></dd></div>
+    </dl></div>
+    <div class="success receipt-saved"><strong>Saved to your demo history</strong><p>Retrying this payment will not charge you twice.</p><small>Demo history resets when the server restarts.</small></div>
+    <p id="copy-status" role="status"></p>
+    <button id="receipt-home" class="secondary">Back to services</button>
+  </section>
+</main>
+</body>
+</html>

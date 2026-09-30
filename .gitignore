@@ -1,0 +1,9 @@
+/target/
+/.idea/
+*.iml
+/.vscode/
+*.log
+/.github/modernize/
+.env
+.env.*
+!.env.example

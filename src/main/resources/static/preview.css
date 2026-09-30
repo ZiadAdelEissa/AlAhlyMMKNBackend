@@ -1,0 +1,79 @@
+:root { font-family: Inter, 'Segoe UI', sans-serif; color:#18243f; background:#e9e7e2; font-synthesis:none; }
+* { box-sizing:border-box; }
+body { margin:0; }
+.phone { max-width:487px; min-height:100vh; margin:auto; padding:24px; background:#f6f3ee; }
+.preview-label { display:flex; justify-content:space-between; color:#68768e; font-size:11px; letter-spacing:2px; margin-bottom:28px; }
+.preview-label span { font-size:10px; letter-spacing:1px; }
+h1 { font-size:25px; margin:5px 0; letter-spacing:-.6px; }
+p { margin:0; }
+.welcome { display:flex; align-items:center; justify-content:space-between; margin-bottom:26px; }
+.welcome p,.help,.demo-note { color:#65748e; }
+.avatar { background:#18243f; color:white; border-radius:18px; padding:18px; font-weight:600; }
+input { width:100%; background:white; border:1px solid #e0ddd7; border-radius:19px; padding:19px; font:inherit; color:inherit; }
+input:focus { outline:2px solid #18243f; outline-offset:2px; }
+button { font:inherit; color:inherit; cursor:pointer; }
+button:focus-visible { outline:3px solid #167763; outline-offset:3px; }
+button:disabled { cursor:not-allowed; }
+#catalog-status { color:#68768e; font-size:13px; margin:15px 0; }
+h2 { color:#62718b; font-size:14px; letter-spacing:1.4px; margin:24px 0 14px; text-transform:uppercase; }
+.service { width:100%; display:flex; gap:16px; align-items:center; padding:17px; border:1px solid #e3dfd9; border-radius:22px; background:white; margin-bottom:13px; text-align:left; min-height:88px; }
+.service strong { font-size:17px; flex:1; }
+.service:disabled { background:#fcfbf8; color:#818693; }
+.icon { display:grid; place-items:center; flex-shrink:0; width:52px; height:52px; background:#fff0e7; color:#b73529; border-radius:16px; font-size:27px; }
+.water .icon { background:#e8f2f7; color:#217793; }
+.icon img { width:27px; height:27px; display:block; }
+.gas .icon { background:#fbefda; color:#946316; }
+.service:disabled .icon { filter:grayscale(1); opacity:.6; }
+.badge { font-size:10px; background:#faf1df; color:#92753b; border-radius:24px; padding:10px 8px; letter-spacing:.4px; }
+.arrow { color:#9aa4b3; font-size:27px; }
+.heading { display:flex; gap:17px; align-items:center; margin-bottom:24px; }
+.back { background:white; border:1px solid #e0ddd7; border-radius:16px; width:54px; height:54px; font-size:32px; }
+.selected { margin-bottom:32px; }
+label { display:block; font-weight:600; color:#62718b; margin-bottom:13px; }
+#subscriber { font-family:Consolas,monospace; font-size:28px; letter-spacing:1px; border-color:#18243f; }
+.help { font-size:14px; line-height:1.5; margin-top:12px; }
+.error { color:#ac3025; margin-top:14px; line-height:1.5; min-height:24px; }
+.success { color:#116753; background:#e6f3eb; border-radius:14px; padding:15px; margin-top:14px; line-height:1.5; }
+.submit-area { margin-top:145px; }
+.primary { background:#b7372c; border:0; border-radius:20px; padding:22px; color:white; font-weight:600; font-size:19px; width:100%; }
+.primary:disabled { opacity:.65; }
+.demo-note { font-size:12px; text-align:center; margin-top:14px; }
+.demo-details { color:#68768e; font-size:12px; margin-top:28px; line-height:1.8; }
+.demo-details summary { cursor:pointer; }
+.secondary { background:white; border:1px solid #ddd; border-radius:12px; padding:12px 20px; }
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.quote-banner { display:flex; justify-content:space-between; gap:12px; background:#fff3f0; border:1px solid #efcbc4; color:#b7372c; padding:17px 19px; border-radius:16px; margin-bottom:19px; }
+.quote-banner strong { font-family:Consolas,monospace; font-size:18px; font-variant-numeric:tabular-nums; }
+.bill-card { background:white; border:1px solid #e3dfd9; border-radius:25px; overflow:hidden; }
+.bill-service { display:flex; align-items:center; gap:16px; padding:22px; border-bottom:1px solid #ece9e4; }
+.bill-service strong { font-size:18px; }
+.bill-service p { color:#65748e; margin-top:6px; }
+.bill-body { padding:7px 22px 24px; }
+.bill-rows { margin:0; }
+.bill-rows>div { display:flex; justify-content:space-between; gap:15px; padding:14px 0; }
+.bill-rows dt { color:#65748e; }
+.bill-rows dd { margin:0; font-weight:600; text-align:right; }
+.bill-body hr { border:0; border-top:1px solid #ece9e4; margin:14px 0; }
+.amounts dd { font:600 20px Consolas,monospace; font-variant-numeric:tabular-nums; }
+.bill-total { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding-top:21px; }
+#bill-total { font:600 36px Consolas,monospace; letter-spacing:-1px; }
+#bill-currency { color:#65748e; font-weight:600; }
+.calculation-note { color:#65748e; font-size:14px; line-height:1.7; border:1px dashed #dad6ce; border-radius:18px; padding:19px; margin-top:20px; }
+.calculation-note strong { color:#18243f; }
+#quote-retry { margin-top:18px; }
+.receipt-hero { background:#14705e; color:white; text-align:center; margin:0 -24px 24px; padding:32px 24px; border-radius:0 0 32px 32px; }
+.receipt-check { width:72px; height:72px; border-radius:50%; background:#ffffff30; display:grid; place-items:center; margin:0 auto 20px; font-size:42px; }
+.receipt-hero h1 { font-size:20px; font-weight:500; margin-bottom:18px; }
+.receipt-hero p strong { font:600 42px Consolas,monospace; }
+.receipt-card { padding:14px 22px; }
+.reference-row { border-top:1px solid #ece9e4; margin-top:8px; }
+.reference-row dd { min-width:0; max-width:70%; }
+#receipt-reference { overflow-wrap:anywhere; font:14px Consolas,monospace; }
+#copy-reference { display:block; margin:12px 0 0 auto; }
+.receipt-saved { margin:18px 0; line-height:1.7; }
+.receipt-saved p,.receipt-saved small { font-size:13px; }
+#copy-status { color:#65748e; margin:12px 0; }
+@media(max-width:360px) { .receipt-hero { margin-left:-18px; margin-right:-18px; } }
+@media(max-width:360px) { .bill-service { padding:18px; }.bill-body { padding:7px 18px 20px; }#bill-total { font-size:29px; }.bill-rows { font-size:14px; } }
+[hidden] { display:none!important; }
+@media(max-width:360px) { .phone { padding:18px; }.service { gap:10px; padding:13px; }.service strong { font-size:15px; }.badge { font-size:9px; }.submit-area { margin-top:100px; } }

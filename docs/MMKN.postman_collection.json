@@ -1,0 +1,538 @@
+{
+  "info": {
+    "name": "MMKN full demo — run on a fresh server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Service dictionary: integer IDs",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/services"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Integer IDs',()=>Object.values(pm.response.json()).flat().forEach(s=>pm.expect(Number.isInteger(s.id)).to.eql(true)));",
+              "pm.test('Service shape and icon URLs', () => { const catalog = pm.response.json(); for (const [category, services] of Object.entries(catalog)) for (const service of services) { pm.expect(service).to.have.all.keys('id','name','available','iconUrl'); pm.expect(service.iconUrl).to.eql('/icons/' + category + '.svg'); } });",
+              "for (const [category, services] of Object.entries(pm.response.json())) pm.collectionVariables.set(category + 'Icon', services[0].iconUrl);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "electricity icon from the catalog URL",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}{{electricityIcon}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('SVG content type', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('image/svg+xml'));",
+              "pm.test('SVG image content', () => pm.expect(pm.response.text()).to.include('<svg'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "water icon from the catalog URL",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}{{waterIcon}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('SVG content type', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('image/svg+xml'));",
+              "pm.test('SVG image content', () => pm.expect(pm.response.text()).to.include('<svg'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "gas icon from the catalog URL",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}{{gasIcon}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('SVG content type', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('image/svg+xml'));",
+              "pm.test('SVG image content', () => pm.expect(pm.response.text()).to.include('<svg'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cairo quote",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 1,\n  \"subscriberNumber\": \"1024750891\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Total',()=>pm.expect(pm.response.json().totalPiastres).to.eql(25320));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid number",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 1,\n  \"subscriberNumber\": \"123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('Error',()=>pm.expect(pm.response.json().code).to.eql('INVALID_SUBSCRIBER_NUMBER'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unavailable",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 2,\n  \"subscriberNumber\": \"1024750891\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "pm.test('Error',()=>pm.expect(pm.response.json().code).to.eql('SERVICE_UNAVAILABLE'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Missing subscriber",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 1,\n  \"subscriberNumber\": \"0000000000\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Error',()=>pm.expect(pm.response.json().code).to.eql('SUBSCRIBER_NOT_FOUND'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "No bill",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 1,\n  \"subscriberNumber\": \"1024750892\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Error',()=>pm.expect(pm.response.json().code).to.eql('NO_OUTSTANDING_BILL'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "String service ID rejected",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": \"1\",\n  \"subscriberNumber\": \"1024750891\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+              "pm.test('Error',()=>pm.expect(pm.response.json().code).to.eql('INVALID_REQUEST'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create payment quote",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 6,\n  \"subscriberNumber\": \"1024750891\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('quoteId',pm.response.json().quoteId); pm.collectionVariables.set('paymentKey',pm.variables.replaceIn('{{$guid}}'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject client amount",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/payments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{paymentKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quoteId\": \"{{quoteId}}\",\n  \"totalPiastres\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pay demo bill",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/payments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{paymentKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quoteId\": \"{{quoteId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Total',()=>pm.expect(pm.response.json().totalPiastres).to.eql(9070)); pm.collectionVariables.set('receiptId',pm.response.json().paymentId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Replay same payment",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/payments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{paymentKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quoteId\": \"{{quoteId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Same receipt',()=>pm.expect(pm.response.json().paymentId).to.eql(pm.collectionVariables.get('receiptId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Another key, same bill",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/payments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "second-{{paymentKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quoteId\": \"{{quoteId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Still same receipt',()=>pm.expect(pm.response.json().paymentId).to.eql(pm.collectionVariables.get('receiptId')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Paid bill cannot be quoted again",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/inquiries",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 6,\n  \"subscriberNumber\": \"1024750891\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409', () => pm.response.to.have.status(409));",
+              "pm.test('Already paid',()=>pm.expect(pm.response.json().code).to.eql('BILL_ALREADY_PAID'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "History has one payment",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/payments"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Only one receipt',()=>pm.expect(pm.response.json()).to.have.length(1));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
