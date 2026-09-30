@@ -26,10 +26,10 @@ Frontend contract and examples: [docs/API.md](docs/API.md). Import [docs/openapi
 
 Open `http://localhost:8080/` for the working preview. Select a service and try subscriber `1024750891`: a successful inquiry opens Bill details automatically with a five-minute countdown. Demo payment and a success receipt are available. All providers, subscribers, amounts and availability values are demo fixtures. There are no real payments or user accounts.
 
-Frontend handoff: [docs/API.md](docs/API.md). Separate Arabic walkthrough for the backend owner: [docs/PROJECT-GUIDE-AR.md](docs/PROJECT-GUIDE-AR.md).
+Frontend handoff: [docs/API.md](docs/API.md).
 
 Import `docs/MMKN.postman_collection.json` into Postman for API checks. Quotes, receipts and duplicate-payment protection are stored in memory and reset on server restart. No real payment is made. Service IDs are integers.
 
-Every service includes `iconUrl`, a relative URL to its public SVG image under `/icons/`. The frontend should resolve it against the backend origin. Complete object/field type tables are included in both the frontend API guide and the separate Arabic project guide.
+Every service includes `iconUrl`, a relative URL to its public SVG image under `/icons/`. The frontend should resolve it against the backend origin. Complete object/field type tables are included in the frontend API guide.
 
 Validation report and Postman instructions: [docs/TEST-RESULTS.md](docs/TEST-RESULTS.md). Restart the demo server before running the entire collection, since payment changes bill state.

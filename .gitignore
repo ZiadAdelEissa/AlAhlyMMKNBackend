@@ -7,3 +7,4 @@
 .env
 .env.*
 !.env.example
+/docs/PROJECT-GUIDE-AR.md
